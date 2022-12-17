@@ -1,7 +1,7 @@
 package me.geek.bag.scheduler
 
+import me.geek.bag.GeekPlayerBag
 import me.geek.bag.api.DataManager
-import me.geek.bag.api.PlayerBagData
 import me.geek.bag.api.PlayerData
 import me.geek.bag.scheduler.sql.actions
 import me.geek.bag.scheduler.sql.use
@@ -14,10 +14,10 @@ import taboolib.common.platform.function.submitAsync
  * 时间: 2022/12/10
  *
  **/
-class SQLImpl: SQL() {
+class SQLImpl {
     private val manager by lazy { DataManager }
 
-    override fun insert(data: PlayerData) {
+    fun insert(data: PlayerData) {
         if (manager.isActive()) {
             submitAsync {
                 manager.getConnection().use {
@@ -35,7 +35,7 @@ class SQLImpl: SQL() {
         }
     }
 
-    override fun select(player: Player, upEmpty: Boolean): PlayerData {
+    fun select(player: Player, upEmpty: Boolean): PlayerData {
         var data: PlayerData? = null
         if (manager.isActive()) {
             manager.getConnection().use {
@@ -54,9 +54,10 @@ class SQLImpl: SQL() {
         } else throw SqlNotActiveException()
     }
 
-    override fun update(data: PlayerData) {
+    fun update(data: PlayerData) {
         if (manager.isActive()) {
             manager.getConnection().use {
+                GeekPlayerBag.debug("update()")
                 this.prepareStatement(
                     "UPDATE `player_data` SET `user`=?,`data`=?,`time`=? WHERE `uuid`=?;"
                 ).actions { p ->
@@ -70,9 +71,10 @@ class SQLImpl: SQL() {
         }
     }
 
-    override fun updateGlobal(data: List<PlayerData>) {
+    fun updateGlobal(data: List<PlayerData>) {
         if (manager.isActive()) {
             manager.getConnection().use {
+                GeekPlayerBag.debug("updateGlobal()")
                 this.prepareStatement(
                     "UPDATE `player_data` SET `user`=?,`data`=?,`time`=? WHERE `uuid`=?;"
                 ).actions { p ->
@@ -83,13 +85,15 @@ class SQLImpl: SQL() {
                         p.setString(4, it.uuid.toString())
                         p.addBatch()
                     }
-                    p.executeBatch()
+                    GeekPlayerBag.debug("update ${p.executeBatch()} 条数据")
                 }
             }
         }
     }
+    fun selectGlobalData() {
+    }
 
-    override fun getDefaultData(player: Player): PlayerData {
+    fun getDefaultData(player: Player): PlayerData {
         return PlayerBagData(player)
     }
 

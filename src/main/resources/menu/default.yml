@@ -1,0 +1,41 @@
+
+title: '§6GeekPlayerBag-&a默认&0扩展背包'
+type: main
+layout:
+  - '#########'
+  - '#MMMMMMM#'
+  - '<#######>'
+group:
+  # 将这个菜单设置为默认菜单
+  default: true
+
+
+icon:
+  M:
+    type: items
+
+  '<':
+    type: LAST_PAGE
+    display:
+      mats: IRON_DOOR
+      name: '&3# &b跳转至'
+      lore:
+        - '&7上一页'
+      sound: BLOCK_NOTE_BLOCK_BIT-1-0
+  '>':
+    type: NEXT_PAGE
+    display:
+      mats: IRON_DOOR
+      name: '&3# &b跳转至'
+      lore:
+        - '&7下一页'
+      sound: BLOCK_NOTE_BLOCK_BIT-1-0
+
+  '#':
+    type: null
+    display:
+      mats: BLACK_STAINED_GLASS_PANE
+      data: 0
+      name: '&b&l 挡板'
+      sound: BLOCK_NOTE_BLOCK_BIT-1-0
+

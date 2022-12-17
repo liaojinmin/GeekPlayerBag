@@ -1,9 +1,8 @@
 package me.geek.bag.menu
 
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
-import org.bukkit.event.inventory.InventoryOpenEvent
+
+import org.bukkit.event.inventory.*
+
 import taboolib.common.platform.event.SubscribeEvent
 
 /**
@@ -12,28 +11,42 @@ import taboolib.common.platform.event.SubscribeEvent
  * 此 MENU 事件处理，借鉴 TabooLib
  **/
 object MenuListener {
-    @SubscribeEvent
-    fun onOpen(e: InventoryOpenEvent) {
-
-    }
 
     @SubscribeEvent
     fun onClick(e: InventoryClickEvent) {
+        val menu = Menu.SessionCache[e.view.player] ?: return
+
+        if (e.rawSlot < 0 || e.rawSlot >= menu.inventory.size) return
 
         // 锁定主手
-        if (e.rawSlot - e.inventory.size - 27 == e.whoClicked.inventory.heldItemSlot || e.click == org.bukkit.event.inventory.ClickType.NUMBER_KEY && e.hotbarButton == e.whoClicked.inventory.heldItemSlot) {
+        if (e.rawSlot - e.inventory.size - 27 == e.whoClicked.inventory.heldItemSlot
+            || e.click == ClickType.NUMBER_KEY
+            && e.hotbarButton == e.whoClicked.inventory.heldItemSlot) {
             e.isCancelled = true
         }
-
-    }
-    @SubscribeEvent
-    fun onDrag(e: InventoryDragEvent) {
-
+        menu.onClick(e)
     }
 
     @SubscribeEvent
     fun onClose(e: InventoryCloseEvent) {
-
+        val menu = Menu.SessionCache[e.view.player] ?: return
+        menu.onClose(e)
+        Menu.SessionCache.remove(e.player)
+        Menu.isOpen.remove(e.player)
     }
+
+    /*
+    @SubscribeEvent(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onCommand(e: PlayerCommandPreprocessEvent) {
+        val message = e.message.removePrefix("/")
+        if (message.isNotBlank()) {
+            Menu.getMenu(message)?.let {
+                e.isCancelled = true
+                e.player.openMenu(it)
+            }
+        }
+    }
+
+     */
 
 }

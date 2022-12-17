@@ -1,0 +1,10 @@
+cmd-adminOpen-deny:
+  - type: sound
+    sound: 'BLOCK_NOTE_BLOCK_DIDGERIDOO'
+    volume: 1
+    pitch: 1
+  - '&1'
+  - '&7  §6GeekPlayerBag &8>&7>&f>'
+  - '&l'
+  - '&c    未知玩家 &f{0} &c请重新选择...'
+  - '&f'

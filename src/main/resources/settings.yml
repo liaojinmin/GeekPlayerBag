@@ -18,3 +18,24 @@ data_storage:
     maximum_lifetime: 1800000
     keepalive_time: 0
     connection_timeout: 5000
+
+# 背包页面限制配置
+# 完全权限控制
+bagpagesize:
+  defaultSize: 1
+  permGroup:
+      # 权限优先级 , 优先级越高越先识别
+    - priority: 1
+      # 识别的权限名称
+      perm: geekbag.page.player
+      # 权限选中后给予的背包页面数量（注意： 是页面数量，不是格子大小）
+      size: 2
+    - priority: 2
+      perm: geekbag.page.vip
+      size: 3
+    - priority: 3
+      perm: geekbag.page.svip
+      size: 6
+    - priority: 4
+      perm: geekbag.page.mvip
+      size: 8

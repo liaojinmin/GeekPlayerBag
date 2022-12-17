@@ -1,4 +1,4 @@
-package me.geek.bag.api
+package me.geek.bag.scheduler
 
 import com.google.gson.annotations.Expose
 import org.bukkit.entity.Player
@@ -15,11 +15,17 @@ data class PlayerBagData(
     override val player: Player,
 
     @Expose
-    override val itemsData: MutableList<ItemStack> = mutableListOf(),
+    override var itemsData: MutableList<ItemStack> = ArrayList(),
+
 ) : PlayerDataBase() {
 
+    @Expose
     override val user: String = player.displayName
 
     override val uuid: UUID = player.uniqueId
+
+    override var itemString: String = ""
+
+
 
 }

@@ -32,7 +32,12 @@ interface PlayerData {
     /**
      * 背包物品序列化字符
      */
-    val itemString: String
+    var itemString: String
+
+    /**
+     * 获取玩家背包页面大小
+     */
+    fun getBagPageSize(): Int
 
     /**
      * 数据序列化

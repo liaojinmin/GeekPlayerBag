@@ -2,7 +2,7 @@ package me.geek.bag.utils
 
 import com.google.gson.*
 import com.google.gson.annotations.Expose
-import me.geek.bag.api.PlayerBagData
+import me.geek.bag.scheduler.PlayerBagData
 import me.geek.bag.api.PlayerData
 import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
@@ -43,11 +43,10 @@ object ClassSerializable {
             val uuid = UUID.fromString(jsonObject.get("uuid").asString)
             val player = Bukkit.getPlayer(uuid)
             val item = mutableListOf<ItemStack>().apply {
-                val b = jsonObject.get("itemString").asJsonArray
-                if (b.size() != 0) {
+                val b = jsonObject.get("itemString").asString.deserializeItemStacks()
+                if (b.isNotEmpty()) {
                     b.forEach {
-                        val a = it.asString.deserializeItemStack()
-                        if (a != null) add(a)
+                        add(it)
                     }
                 }
             }

@@ -1,8 +1,9 @@
 package me.geek.bag.api
 
 import me.geek.bag.SetTings
+import me.geek.bag.api.DataManager.save
 import me.geek.bag.api.event.PlayerBagLoadEvent
-import me.geek.bag.scheduler.SQL
+import me.geek.bag.scheduler.SQLImpl
 import me.geek.bag.scheduler.sql.Mysql
 import me.geek.bag.scheduler.sql.Sqlite
 import me.geek.bag.scheduler.sql.action
@@ -25,16 +26,18 @@ object DataManager {
      */
     private val PlayerCache: MutableMap<UUID, PlayerData> = ConcurrentHashMap()
 
-    private fun getPlayerDataList() = PlayerCache.map { it.value }
+    fun getPlayerDataList() = PlayerCache.map { it.value }
 
-    fun saveGlobalData() = SQL.INSTANCE.updateGlobal(getPlayerDataList())
+    private val SqlImpl: SQLImpl = SQLImpl()
+
+    fun saveGlobalData() = SqlImpl.updateGlobal(getPlayerDataList())
 
 
     /**
      * 获取玩家数据
      */
     fun Player.getData(): PlayerData {
-       return PlayerCache[this.uniqueId] ?: SQL.INSTANCE.select(this, true)
+       return PlayerCache[this.uniqueId] ?: SqlImpl.select(this, true)
     }
 
     /**
@@ -43,7 +46,7 @@ object DataManager {
     fun Player.select(isAsync: Boolean = false) {
         if (isAsync)
             submitAsync {
-                SQL.INSTANCE.select(this@select, true).also {
+                SqlImpl.select(this@select, true).also {
                     val eve = PlayerBagLoadEvent(it)
                     eve.call()
                     if (!eve.isCancelled) {
@@ -51,7 +54,7 @@ object DataManager {
                     }
                 }
             }
-        else SQL.INSTANCE.select(this, true).also {
+        else SqlImpl.select(this, true).also {
             val eve = PlayerBagLoadEvent(it)
             eve.call()
             if (!eve.isCancelled) {
@@ -64,8 +67,14 @@ object DataManager {
      * 保存玩家数据
      */
     fun Player.save(isAsync: Boolean = false) {
-        if (isAsync) submitAsync { PlayerCache[this@save.uniqueId]?.let { SQL.INSTANCE.update(it) } }
-        else PlayerCache[this.uniqueId]?.let { SQL.INSTANCE.update(it) }
+        if (isAsync) submitAsync {
+            PlayerCache[this@save.uniqueId]?.let { SqlImpl.update(it) }
+            PlayerCache.remove(this@save.uniqueId)
+        }
+        else {
+            PlayerCache[this.uniqueId]?.let { SqlImpl.update(it) }
+            PlayerCache.remove(this.uniqueId)
+        }
     }
 
 

@@ -3,6 +3,14 @@ package me.geek.bag.commamd
 
 
 import me.geek.bag.GeekPlayerBag
+import me.geek.bag.SetTings
+import me.geek.bag.api.DataManager
+import me.geek.bag.api.DataManager.getData
+import me.geek.bag.menu.Menu
+import me.geek.bag.menu.Menu.getMenu
+import me.geek.bag.menu.Menu.openMenu
+import me.geek.bag.menu.action.AdminMenu
+import org.bukkit.Bukkit
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -12,6 +20,7 @@ import taboolib.common.platform.function.adaptCommandSender
 
 
 import taboolib.module.chat.TellrawJson
+import taboolib.platform.util.sendLang
 
 
 @CommandHeader(name = "GeekPlayerBag", aliases = ["gekBag", "bag"], permissionDefault = PermissionDefault.TRUE )
@@ -27,19 +36,32 @@ object CmdCore {
             createHelp(sender)
         }
     }
-    @CommandBody(permission = "Bag.command.admin")
+    @CommandBody
+    val open = subCommand {
+        execute<Player> { sender, _, _ ->
+            sender.openMenu(sender.getMenu())
+        }
+    }
+
+    @CommandBody(permission = "bag.command.admin")
+    val adminOpen = subCommand {
+        execute<Player> { sender, _, _ ->
+            AdminMenu(sender).build()
+        }
+    }
+
+
+    @CommandBody(permission = "bag.command.admin")
     val reload = subCommand {
         execute<CommandSender> { _, _, _ ->
-
+            SetTings.onReload()
+            DataManager.saveGlobalData()
+            Menu.closeGui()
+            Menu.loadMenu()
         }
     }
 
-    @CommandBody(permission = "Bag.command.admin")
-    val test = subCommand {
-        execute<Player> { sender, _, _ ->
 
-        }
-    }
 
 
 

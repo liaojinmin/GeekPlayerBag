@@ -1,6 +1,7 @@
 package me.geek.bag
 
 import me.geek.bag.api.DataManager
+import me.geek.bag.menu.Menu
 import me.geek.bag.utils.colorify
 import org.bukkit.Bukkit
 import taboolib.common.env.RuntimeDependencies
@@ -37,6 +38,7 @@ object GeekPlayerBag: Plugin() {
     override fun onEnable() {
         runLogo()
         SetTings.onLoadSetTings()
+        Menu.loadMenu()
         DataManager.start()
     }
 
@@ -45,7 +47,7 @@ object GeekPlayerBag: Plugin() {
     }
 
     override fun onDisable() {
-
+        Menu.closeGui()
         DataManager.saveGlobalData() // 保存数据
         DataManager.closeData() // 关闭数据库
 

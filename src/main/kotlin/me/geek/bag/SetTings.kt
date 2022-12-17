@@ -16,13 +16,6 @@ import taboolib.module.configuration.Configuration.Companion.getObject
  **/
 @PlatformSide([Platform.BUKKIT])
 object SetTings {
-
-    var debug: Boolean = false
-        private set
-    var ConfigVersion: Double = 1.0
-        private set
-    lateinit var sqlConfig: SqlConfig
-
     @Config(value = "settings.yml", autoReload = true)
     lateinit var config: ConfigFile
         private set
@@ -32,11 +25,42 @@ object SetTings {
         config.onReload { onLoadSetTings() }
     }
 
+
+    var debug: Boolean = false
+        private set
+    private var ConfigVersion: Double = 1.0
+
+    lateinit var sqlConfig: SqlConfig
+    private set
+
+    lateinit var bagPageData: BagPageData
+    private set
+
+
+    fun onReload() {
+        debug = config.getBoolean("debug", false)
+        bagPageData = config.getObject<BagPageData>("bagpagesize", false).also {
+            it.permGroup.sortByDescending { bag -> bag.priority }
+        }
+    }
     fun onLoadSetTings() {
         debug = config.getBoolean("debug", false)
         ConfigVersion = config.getDouble("ConfigVersion")
         sqlConfig = config.getObject<SqlConfig>("data_storage", false).apply {
             sqlite = GeekPlayerBag.instance.dataFolder
         }
+        bagPageData = config.getObject<BagPageData>("bagpagesize", false).also {
+            it.permGroup.sortByDescending { bag -> bag.priority }
+        }
     }
+
+    data class BagPageData(
+        val defaultSize: Int = 1,
+        val permGroup: MutableList<PageData> = mutableListOf()
+    )
+    data class PageData(
+        val priority: Int = 0,
+        val perm: String = "",
+        val size: Int = 1,
+    )
 }
