@@ -4,7 +4,7 @@ import me.geek.bag.SetTings
 import me.geek.bag.api.PlayerData
 import me.geek.bag.utils.ClassSerializable
 import me.geek.bag.utils.serializeItemStacks
-import taboolib.platform.compat.checkPermission
+import org.bukkit.inventory.ItemStack
 
 
 /**
@@ -13,6 +13,12 @@ import taboolib.platform.compat.checkPermission
  *
  **/
 abstract class PlayerDataBase : PlayerData {
+
+    @Synchronized
+    override fun upBagItems(newItems: MutableList<ItemStack>) {
+        this.itemsData.clear()
+        this.itemsData.addAll(newItems)
+    }
 
     override fun getBagPageSize(): Int {
         SetTings.bagPageData.permGroup.forEach {

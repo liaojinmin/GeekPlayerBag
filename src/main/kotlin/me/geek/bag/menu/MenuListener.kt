@@ -1,9 +1,11 @@
 package me.geek.bag.menu
 
 
+import me.geek.bag.api.DataManager.getData
 import org.bukkit.event.inventory.*
 
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.platform.util.sendLang
 
 /**
  * 作者: 老廖
@@ -11,6 +13,15 @@ import taboolib.common.platform.event.SubscribeEvent
  * 此 MENU 事件处理，借鉴 TabooLib
  **/
 object MenuListener {
+
+    @SubscribeEvent
+    fun onOpen(e: InventoryOpenEvent) {
+        val menu = Menu.SessionCache[e.view.player] ?: return
+        if (menu.player.getData().isLook) {
+            menu.player.closeInventory()
+            menu.player.sendLang("player-bag-look")
+        }
+    }
 
     @SubscribeEvent
     fun onClick(e: InventoryClickEvent) {

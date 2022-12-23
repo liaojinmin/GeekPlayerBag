@@ -1,6 +1,7 @@
 package me.geek.bag
 
 import me.geek.bag.scheduler.sql.SqlConfig
+import me.geek.bag.scheduler.task.AutoSave
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
@@ -36,6 +37,9 @@ object SetTings {
     lateinit var bagPageData: BagPageData
     private set
 
+    lateinit var dataTask: DataTask
+    private set
+
 
     fun onReload() {
         debug = config.getBoolean("debug", false)
@@ -52,8 +56,15 @@ object SetTings {
         bagPageData = config.getObject<BagPageData>("bagpagesize", false).also {
             it.permGroup.sortByDescending { bag -> bag.priority }
         }
+        dataTask = config.getObject<DataTask>("dataTask", false)
+        if (dataTask.autoSave) AutoSave()
+
     }
 
+    data class DataTask(
+        val autoSave: Boolean = false,
+        val delay: Int = 600
+    )
     data class BagPageData(
         val defaultSize: Int = 1,
         val permGroup: MutableList<PageData> = mutableListOf()

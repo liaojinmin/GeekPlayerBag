@@ -19,6 +19,12 @@ data_storage:
     keepalive_time: 0
     connection_timeout: 5000
 
+dataTask:
+  #是否启用定时保存
+  autoSave: true
+  # 每次任务间隔 (秒)
+  delay: 600
+
 # 背包页面限制配置
 # 完全权限控制
 bagpagesize:

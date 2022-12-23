@@ -1,21 +1,24 @@
 package me.geek.bag.menu.action
 
-import me.geek.bag.api.DataManager
-import me.geek.bag.menu.Menu
+import me.geek.bag.api.PlayerData
 import me.geek.bag.menu.MenuBase
+import me.geek.bag.menu.sub.Type
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 /**
  * 作者: 老廖
- * 时间: 2022/12/17
+ * 时间: 2022/12/18
  *
  **/
-class AdminMenu(
+class AdminMenu2(
     override val player: Player,
+    private val target: PlayerData
 ): MenuBase() {
     private val layout: String =
         "mmmmmmmmm" +
@@ -24,12 +27,16 @@ class AdminMenu(
         "mmmmmmmmm" +
         "mmmmmmmmm" +
         "<       >"
-    private val playerDataList = DataManager.getPlayerDataList()
 
+    override val inventory: Inventory = Bukkit.createInventory(this.player, 54, "§6G §0- §f${target.user} §7的扩展背包")
     override fun build(): MenuBase {
+        // 锁定玩家
+        target.isLook = true
+        target.player.closeInventory()
+
         addItems {
-            if (playerDataList.isNotEmpty()) {
-                var dataSize = playerDataList.size
+            if (target.itemsData.isNotEmpty()) {
+                var dataSize = target.itemsData.size
                 var items = this.inventory.contents
                 while (dataSize > 0) {
                     layout.forEachIndexed { index, c ->
@@ -47,21 +54,8 @@ class AdminMenu(
                                 }
                                 else -> {
                                     if (dataSize > 0) {
-                                        val player = playerDataList[playerDataList.size - dataSize]
-                                        items[index] = ItemStack(Material.PLAYER_HEAD).apply {
-                                            itemMeta = itemMeta?.also {
-                                                it.setDisplayName("§f${player.user} §7的扩展背包")
-                                                it.lore = listOf(
-                                                    "",
-                                                    "§8| §7UUID: §f${player.uuid}",
-                                                    "§8| §7物品大小: §a${player.itemsData.size}",
-                                                    "",
-                                                    "§8| §7状态: §a在线 §8(暂未支持离线)",
-                                                    "",
-                                                    "§8[§a鼠标点击§8] §7- §F查看背包"
-                                                )
-                                            }
-                                        }
+                                        val itemStack = target.itemsData[target.itemsData.size - dataSize]
+                                        items[index] = itemStack
                                         dataSize--
                                     }
                                 }
@@ -73,18 +67,16 @@ class AdminMenu(
                 }
             }
             this.openMenu()
-
         }
+
         return this
     }
 
-
     override fun onClick(event: InventoryClickEvent) {
-        event.isCancelled = true
         layout[event.rawSlot].let {
-            if (it == ' ') return
             when (it) {
                 '<' -> {
+                    event.isCancelled = true
                     if (this.page != 0) {
                         // 将当前页面的更改保存
                         this.contents[page] = event.inventory.contents
@@ -95,6 +87,7 @@ class AdminMenu(
                     return
                 }
                 '>' -> {
+                    event.isCancelled = true
                     if (this.contents.size > this.page + 1 ) {
                         // 将当前页面的更改保存
                         this.contents[page] = event.inventory.contents
@@ -104,18 +97,38 @@ class AdminMenu(
                     }
                     return
                 }
-                else -> {
-                    val data = playerDataList[event.rawSlot]
-                    if (this.player == data.player) return
-                    this.player.closeInventory()
+                else -> {}
+            }
+        }
 
-                    AdminMenu2(this.player, data).build()
+    }
+    private fun PlayerData.filter(items: Array<ItemStack>, newItems: MutableList<ItemStack>) {
+        items.forEachIndexed { index, itemStack ->
+            if (itemStack != null) {
+                // 通过索引寻找图标字符
+                layout[index].let {
+                    if (!listOf(' ', '>', '<').contains(it)) {
+                        if (itemStack.type != Material.AIR) {
+                            newItems.add(itemStack)
+                        }
+                    }
                 }
             }
         }
     }
-
     override fun onClose(event: InventoryCloseEvent) {
+        val newItems = mutableListOf<ItemStack>()
 
+        if (contents.size == 0) target.filter(event.inventory.contents, newItems)
+        // 遍历分页
+        contents.forEachIndexed { page, value ->
+            if (page != this.page) {
+                target.filter(value, newItems)
+            } else target.filter(event.inventory.contents, newItems)
+        }
+        target.upBagItems(newItems) // 同步更新数据
+        // 解锁玩家
+        target.isLook = false
     }
+
 }

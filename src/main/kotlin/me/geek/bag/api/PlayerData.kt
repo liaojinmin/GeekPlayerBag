@@ -35,6 +35,16 @@ interface PlayerData {
     var itemString: String
 
     /**
+     * 背包是否处于锁定状态
+     */
+    var isLook: Boolean
+
+    /**
+     * 更新玩家背包物品
+     */
+    fun upBagItems(newItems: MutableList<ItemStack>)
+
+    /**
      * 获取玩家背包页面大小
      */
     fun getBagPageSize(): Int

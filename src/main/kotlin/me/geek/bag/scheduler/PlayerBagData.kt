@@ -15,9 +15,12 @@ data class PlayerBagData(
     override val player: Player,
 
     @Expose
-    override var itemsData: MutableList<ItemStack> = ArrayList(),
+    override val itemsData: MutableList<ItemStack> = ArrayList(),
 
 ) : PlayerDataBase() {
+
+    @Expose
+    override var isLook: Boolean = false
 
     @Expose
     override val user: String = player.displayName

@@ -1,6 +1,7 @@
 package me.geek.bag.menu
 
 import me.geek.bag.GeekPlayerBag
+import me.geek.bag.api.DataManager.getData
 import me.geek.bag.menu.action.PlayerBag
 import me.geek.bag.menu.sub.Icon
 import me.geek.bag.menu.sub.MenuData
@@ -18,6 +19,7 @@ import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration.Companion.getObject
 import taboolib.module.configuration.SecuredFile
 import taboolib.module.configuration.util.getMap
+import taboolib.platform.util.sendLang
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -71,6 +73,10 @@ object Menu {
         }
     }
     fun Player.openMenu(menuData: MenuData) {
+        if (this.getData().isLook) {
+            this.sendLang("player-bag-look")
+            return
+        }
         playSound(location, Sound.UI_BUTTON_CLICK, 1f, 2f)
         PlayerBag(this, menuData).build()
     }

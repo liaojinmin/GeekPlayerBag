@@ -1,7 +1,10 @@
 package me.geek.bag.menu
 
 import me.geek.bag.GeekPlayerBag
+import me.geek.bag.api.PlayerData
+import me.geek.bag.menu.sub.Type
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
 
 import org.bukkit.inventory.Inventory
@@ -40,8 +43,7 @@ abstract class MenuBase: MenuHeader {
 
     val contents: MutableList<Array<ItemStack>> = ArrayList()
 
-    val inventory: Inventory by lazy {
-
+    open val inventory: Inventory by lazy {
         this.menuData?.let {
             Bukkit.createInventory(this.player, it.size, it.title).apply {
                 if (it.items.isNotEmpty()) {
@@ -50,6 +52,8 @@ abstract class MenuBase: MenuHeader {
             }
         } ?: Bukkit.createInventory(this.player, 54, "§6GeekPlayerBag §0- §7管理员界面")
     }
+
+
 
 
     fun Player.sound(s: Array<String>) {

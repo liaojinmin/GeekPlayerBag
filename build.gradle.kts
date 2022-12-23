@@ -16,6 +16,7 @@ taboolib {
         "module-lang",
         "module-nms",
         "module-nms-util",
+        "module-metrics",
     )
     description {
         contributors {
@@ -56,7 +57,7 @@ dependencies {
 
     // Hook Plugins
     compileOnly("me.clip:placeholderapi:2.10.9") { isTransitive = false }
-    compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
+//    compileOnly("com.github.MilkBowl:VaultAPI:-SNAPSHOT") { isTransitive = false }
 
     // Libraries
     compileOnly(fileTree("lib"))

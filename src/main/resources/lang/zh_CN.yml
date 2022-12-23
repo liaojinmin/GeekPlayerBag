@@ -8,3 +8,39 @@ cmd-adminOpen-deny:
   - '&l'
   - '&c    未知玩家 &f{0} &c请重新选择...'
   - '&f'
+
+player-bag-look:
+  - type: title
+    title: '&c你的扩展背包已锁定'
+    subtitle: '&7如有疑问请联系管理员'
+    fadein: 20
+    fadeout: 20
+    stay: 20
+  - type: sound
+    sound: 'BLOCK_NOTE_BLOCK_DIDGERIDOO'
+    volume: 1
+    pitch: 1
+  - '&1'
+  - '&7  §6GeekPlayerBag &8>&7>&f>'
+  - '&l'
+  - '&c    你的扩展背包目前处于锁定状态...'
+  - '&f'
+
+
+
+
+
+CMD-HELP-ADMIN:
+  - '  &c管理员: '
+  - '    &7-&f adminOpen'
+  - '      &8查看所有在线玩家的扩展背包'
+  - '    &7-&f adminOpen &f<&7目标玩家&f>'
+    - '    &8查看指定玩家的扩展背包'
+  - '    &7-&f adminClear &f<&7目标玩家&f>'
+  - '      &8清空指定玩家的扩展背包(&c操作不可逆)'
+  - '    &7-&f reload'
+  - '      &8重写载入配置文件'
+CMD-HELP-PLAYER:
+  - '  &a玩家: '
+  - '    &7-&f open'
+  - '      &8打开扩展背包'

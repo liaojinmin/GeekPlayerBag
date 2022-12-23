@@ -5,6 +5,7 @@ import me.geek.bag.api.DataManager.getData
 import me.geek.bag.api.PlayerData
 import me.geek.bag.menu.MenuBase
 import me.geek.bag.menu.sub.MenuData
+import me.geek.bag.menu.sub.Type
 import me.geek.bag.menu.sub.Type.*
 import org.bukkit.Material
 
@@ -72,32 +73,32 @@ class PlayerBag(
 
     override fun onClose(event: InventoryCloseEvent) {
         GeekPlayerBag.debug("onClose")
-        val data = player.getData()
-
-        data.itemsData.clear()
-        if (contents.size == 0) itemFilter(event.inventory.contents, data)
+        val newItems = mutableListOf<ItemStack>()
+        if (contents.size == 0) itemFilter(event.inventory.contents, newItems)
         // 遍历分页
         contents.forEachIndexed { page, value ->
             if (page != this.page) {
-                itemFilter(value, data)
-            } else itemFilter(event.inventory.contents, data)
+                itemFilter(value, newItems)
+            } else itemFilter(event.inventory.contents, newItems)
         }
+        player.getData().upBagItems(newItems)
     }
-    private fun itemFilter(items: Array<ItemStack>, data: PlayerData) {
+    private fun itemFilter(items: Array<ItemStack>, newItems: MutableList<ItemStack>) {
         items.forEachIndexed { index, itemStack ->
-          //  if (itemStack != null) {
-               // 通过索引寻找图标字符
+            if (itemStack != null) {
+                // 通过索引寻找图标字符
                 menuData.layout[index].let {
-                   // 找到字符 判断图标种类
+                    // 找到字符 判断图标种类
                     menuData.icon[it]?.let { ic ->
-                        if (ic.type == ITEMS) {
-                            data.itemsData.add(itemStack)
+                        if (ic.type == ITEMS && itemStack.type != Material.AIR) {
+                            newItems.add(itemStack)
                         }
                     }
                 }
-          //  }
+            }
         }
     }
+
 
 
     override fun build(): MenuBase {

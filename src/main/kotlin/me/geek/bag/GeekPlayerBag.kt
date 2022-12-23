@@ -10,6 +10,7 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.console
+import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 
 /**
@@ -43,6 +44,7 @@ object GeekPlayerBag: Plugin() {
     }
 
     override fun onActive() {
+        Metrics(17146, VERSION.toString(), Platform.BUKKIT)
 
     }
 

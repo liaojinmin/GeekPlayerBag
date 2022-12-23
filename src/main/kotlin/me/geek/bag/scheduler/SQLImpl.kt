@@ -93,7 +93,7 @@ class SQLImpl {
     fun selectGlobalData() {
     }
 
-    fun getDefaultData(player: Player): PlayerData {
+    private fun getDefaultData(player: Player): PlayerData {
         return PlayerBagData(player)
     }
 
